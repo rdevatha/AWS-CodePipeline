@@ -1,7 +1,6 @@
 ## Purpose
 
-This Packer AMI Builder creates a new AMI out of the latest Amazon Linux AMI, and also provides a cloudformation template that leverages AWS CodePipeline to 
-orchestrate the entire process.
+This CodePipeline creates a new AMI out of the latest Amazon Linux AMI, and also provides a cloudformation template that leverages AWS CodePipeline to orchestrate the entire process. It includes the codepipeline connecting to a git repository, invoking AWS code build step which calls packer to create the ami. Packer then uses ansible as a provisioner to configure the AMI. 
 
 ![Packer AMI Builder Diagram](images/ami-builder-diagram.png)
 
@@ -25,7 +24,7 @@ orchestrate the entire process.
 Cloudformation will create the following resources as part of the AMI Builder for Packer:
 
 * ``cloudformation/pipeline.yaml``
-    + AWS CodeCommit - Git repository
+    + AWS CodeCommit - Git repository ( we will later change it to git hub repo )
     + AWS CodeBuild - Downloads Packer and run Packer to build AMI 
     + AWS CodePipeline - Orchestrates pipeline and listen for new commits in CodeCommit
     + Amazon SNS Topic - AMI Builds Notification via subscribed email
@@ -47,34 +46,22 @@ Region | AMI Builder Launch Template
 N. Virginia (us-east-1) | [![Launch Stack](images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=AMI-Builder-Blogpost&templateURL=https://s3-eu-west-1.amazonaws.com/ami-builder-packer/cloudformation/pipeline.yaml)
 N. Virginia (eu-west-1) | [![Launch Stack](images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=AMI-Builder-Blogpost&templateURL=https://s3-eu-west-1.amazonaws.com/ami-builder-packer/cloudformation/pipeline.yaml)
 
-**To clone the AWS CodeCommit repository (console)**
+**To clone the Github repository (web-based)**
 
-1.  From the AWS Management Console, open the AWS CloudFormation console.
-2.  Choose the AMI-Builder-Blogpost stack, and then choose Output.
-3.  Make a note of the Git repository URL.
-4.  Use git to clone the repository.
-For example: git clone https://git-codecommit.eu-west-1.amazonaws.com/v1/repos/AMI-Builder_repo
+1.  Fork/Clone the current git hub repository you are looking at. 
 
-**To clone the AWS CodeCommit repository (CLI)**
 
-```bash
-# Retrieve CodeCommit repo URL
-git_repo=$(aws cloudformation describe-stacks --query 'Stacks[0].Outputs[?OutputKey==`GitRepository`].OutputValue' --output text --stack-name "AMI-Builder-Blogpost")
-
-# Clone repository locally
-git clone ${git_repo}
-```
-
+**If you choose to create an empty Github repository (cli-based)**
 Next, we need to copy all files in this repository into the newly cloned Git repository:
 
 * Download [ami-builder-packer ZIP](https://github.com/awslabs/ami-builder-packer/archive/master.zip).
 * Extract and copy the contents to the Git repo
 
-Lastly, commit these changes to your AWS CodeCommit repo and watch the AMI being built through the AWS CodePipeline Console:
+Lastly, commit these changes to your git repo and watch the AMI being built through the AWS CodePipeline Console:
 
 ```bash
 git add .
-git commit -m "SHIP THIS AMI"
+git commit -m "Lets make an AMI"
 git push origin master
 ```
 
