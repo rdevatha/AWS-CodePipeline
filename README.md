@@ -1,6 +1,6 @@
 ## Purpose
 
-This CodePipeline creates a new AMI out of the latest Amazon Linux AMI, and also provides a cloudformation template that leverages AWS CodePipeline to orchestrate the entire process. It includes the codepipeline connecting to a git repository, invoking AWS code build step which calls packer to create the ami. Packer then uses ansible as a provisioner to configure the AMI. 
+This, CodePipeline creates a new AMI out of the latest Amazon Linux AMI, and also provides a cloudformation template that leverages AWS CodePipeline to orchestrate the entire process. It includes the codepipeline connecting to a git repository, invoking AWS code build step which calls packer to create the ami. Packer then uses ansible as a provisioner to configure the AMI. 
 
 ![Packer AMI Builder Diagram](images/ami-builder-diagram.png)
 
